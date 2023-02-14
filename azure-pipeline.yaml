@@ -49,7 +49,7 @@ steps:
     azureSubscription: $(azureSubscription)
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
-    inlineScript: 'az acr list --output tsv | grep $resourceGroup || az acr create --resource-group $(myResourceGroup) --name $azureContainerRegistry --sku Basic'
+    inlineScript: 'az acr list --output tsv | grep $resourceGroup || az acr create --resource-group $(resourceGroup) --name $(azureContainerRegistry) --sku Basic'
 
 - task: AzureCLI@2
   displayName: Check or create appservice plan
@@ -65,7 +65,8 @@ steps:
     azureSubscription: $(azureSubscription)
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
-    inlineScript: 'az webapp list --output tsv | grep $webAppName || az webapp create -g $(resourceGroup) -p $(appServicePlanName) -n $(webAppName) -i $(azureContainerRegistry)/$(imageName):$(Build.BuildId)'
+    inlineScript: 'az webapp list --output tsv | grep $webAppName || az webapp create -g $(resourceGroup) -p $(appServicePlanName) -n $(webAppName)'
+#-i $(azureContainerRegistry)/$(imageName):$(Build.BuildId)'
 
 #- task: AzureCLI@2
 #  displayName: Set environment variables
