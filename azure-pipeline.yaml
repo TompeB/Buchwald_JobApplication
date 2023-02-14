@@ -3,7 +3,7 @@ trigger:
 - main
 
 pool:
-  vmImage: 'Ubuntu-16.04'
+  vmImage: 'Ubuntu-22.04'
 
 variables:
   azureSubscription: 'Azure Resource Group'
