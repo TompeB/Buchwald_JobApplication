@@ -65,8 +65,7 @@ steps:
     azureSubscription: $(azureSubscription)
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
-    inlineScript: 'az webapp list --output tsv | grep $webAppName || az webapp create -g $(resourceGroup) -p $(appServicePlanName) -n $(webAppName)'
-#-i $(azureContainerRegistry)/$(imageName):$(Build.BuildId)'
+    inlineScript: 'az webapp list --output tsv | grep $webAppName || az webapp create -g $(resourceGroup) -p $(appServicePlanName) -n $(webAppName) -i $(azureContainerRegistry)/$(imageName):$(Build.BuildId)'
 
 #- task: AzureCLI@2
 #  displayName: Set environment variables
