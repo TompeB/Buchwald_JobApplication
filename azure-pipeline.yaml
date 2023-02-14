@@ -3,7 +3,7 @@ trigger:
 - main
 
 pool:
-  vmImage: 'Ubuntu-22.04'
+  vmImage: 'Ubuntu-21.04'
 
 variables:
   azureSubscription: 'Azure Resource Group'
@@ -17,15 +17,15 @@ variables:
   region: westeurope
 
 steps:
-- task: Docker@2
-  displayName: Build and push an image to ACR
-  inputs:
-    command: buildAndPush
-    tags: |
-      $(Build.BuildId)
-    azureSubscription: $(azureSubscription)
-    azureContainerRegistry: $(azureContainerRegistry)
-    Dockerfile: '**/PointOfSale.Api/Dockerfile'
+#- task: Docker@2
+#  displayName: Build and push an image to ACR
+#  inputs:
+#    command: buildAndPush
+#    tags: |
+#      $(Build.BuildId)
+#    azureSubscription: $(azureSubscription)
+#    azureContainerRegistry: $(azureContainerRegistry)
+#    Dockerfile: '**/DockerfilePipeline'
 
 - task: AzureCLI@2
   displayName: Login
@@ -78,13 +78,13 @@ steps:
 #      az webapp config appsettings set --name $(appServicePlanName) --resource-group $(resourceGroup) --settings <environment-variable-name1>=<value1> <environment-variable-name2>=<value2>
 
 
-- task: AzureRmWebAppDeployment@4
-  displayName: 'Azure App Service Deploy: YourWebAppName'
-  inputs:
-    azureSubscription: $(azureSubscription)
-    WebAppName: $(webAppName)
-    DockerNamespace: $(azureContainerRegistry)
-    DockerRepository: $(imageName)
-    DockerImageTag: '$(Build.BuildId)'
-    packageForLinux: '$(System.DefaultWorkingDirectory)/**/drop/*.zip'
-    TakeAppOfflineFlag: true
+#- task: AzureRmWebAppDeployment@4
+#  displayName: 'Azure App Service Deploy: $(webAppName)'
+#  inputs:
+#    azureSubscription: $(azureSubscription)
+#    WebAppName: $(webAppName)
+#    DockerNamespace: $(azureContainerRegistry)
+#    DockerRepository: $(imageName)
+#    DockerImageTag: '$(Build.BuildId)'
+#    packageForLinux: '$(System.DefaultWorkingDirectory)/**/drop/*.zip'
+#    TakeAppOfflineFlag: true
