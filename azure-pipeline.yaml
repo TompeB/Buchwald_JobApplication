@@ -6,7 +6,7 @@ pool:
   vmImage: 'Ubuntu-16.04'
 
 variables:
-  azureSubscription: '0fe14c06-ca4b-4239-aa16-bb19387160b6'
+  azureSubscription: 'Azure Resource Group'
   appServicePlanName: 'PointOfSalePlan'
   resourceGroup: 'JobApplication'
   azureContainerRegistry:
