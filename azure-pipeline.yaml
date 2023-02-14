@@ -1,0 +1,90 @@
+trigger:
+- master
+- main
+
+pool:
+  vmImage: 'Ubuntu-16.04'
+
+variables:
+  azureSubscription: '0fe14c06-ca4b-4239-aa16-bb19387160b6'
+  appServicePlanName: 'PointOfSalePlan'
+  resourceGroup: 'JobApplication'
+  azureContainerRegistry:
+  servicePrincipalId: '2548af5a-810c-4ae3-bf8a-517f7d9ad407'
+  servicePrincipalKey: 'zWg8Q~EuXPYVrUzvgBN2jjdszyszBRwXqucwxcWW'
+  webAppName: 'PointOFSaleApi'
+  imageName: pointofsaleapi
+  region: westeurope
+
+steps:
+- task: Docker@2
+  displayName: Build and push an image to ACR
+  inputs:
+    command: buildAndPush
+    tags: |
+      $(Build.BuildId)
+    azureSubscription: $(azureSubscription)
+    azureContainerRegistry: $(azureContainerRegistry)
+    Dockerfile: '**/PointOfSale.Api/Dockerfile'
+
+- task: AzureCLI@2
+  displayName: Login
+  inputs:
+    azureSubscription: $(azureSubscription)
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: 'az login -u $(servicePrincipalId) -p $(servicePrincipalKey)'
+
+- task: AzureCLI@2
+  displayName: Check or create resource group
+  inputs:
+    azureSubscription: $(azureSubscription)
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: 'az group list --output tsv | grep $resourceGroup || az group create -n $(resourceGroup) -l $(region)'
+
+- task: AzureCLI@2
+  displayName: Check or create container registry
+  inputs:
+    azureSubscription: $(azureSubscription)
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: 'az acr list --output tsv | grep $resourceGroup || az acr create --resource-group $(myResourceGroup) --name (azureContainerRegistry) --sku Basic'
+
+- task: AzureCLI@2
+  displayName: Check or create appservice plan
+  inputs:
+    azureSubscription: $(azureSubscription)
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: 'az appservice plan list --output tsv | grep $appServicePlanName || az appservice plan create  -g $(resourceGroup) --is-linux --name $(appServicePlanName) --sku B1'
+
+- task: AzureCLI@2
+  displayName: Check or create Azure webapp
+  inputs:
+    azureSubscription: $(azureSubscription)
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: 'az webapp list --output tsv | grep $webAppName || az webapp create -g $(resourceGroup) -p $(appServicePlanName) -n $(webAppName) -i $(azureContainerRegistry)/$(imageName):$(Build.BuildId)'
+
+#steps:
+#- task: AzureCLI@2
+#  displayName: Set environment variables
+#  inputs:
+#    azureSubscription: $(azureSubscription)
+#    scriptType: 'bash'
+#    scriptLocation: 'inlineScript'
+#    inlineScript: |
+#      az webapp config appsettings set --name $(appServicePlanName) --resource-group $(resourceGroup) --settings <environment-variable-name1>=<value1> <environment-variable-name2>=<value2>
+
+
+- task: AzureRmWebAppDeployment@4
+  displayName: 'Azure App Service Deploy: YourWebAppName'
+  inputs:
+    azureSubscription: $(azureSubscription)
+    WebAppName: $(webAppName)
+    DockerNamespace: $(azureContainerRegistry)
+    DockerRepository: $(imageName)
+    DockerImageTag: '$(Build.BuildId)'
+    packageForLinux: '$(System.DefaultWorkingDirectory)/**/drop/*.zip'
+    TakeAppOfflineFlag: true
