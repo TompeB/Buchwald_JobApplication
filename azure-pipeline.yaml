@@ -45,13 +45,12 @@ steps:
   displayName: Build and push an image to ACR
   inputs:
     command: buildAndPush
+    repository: pointofsaleapi
     tags: |
       $(Build.BuildId)
     azureSubscription: $(azureSubscription)
     azureContainerRegistry: $(azureContainerRegistry)
     Dockerfile: '**/DockerfilePipeline'
-
-- task: PublishBuildArtifacts@1
 
 - task: AzureCLI@2
   displayName: Check or create appservice plan
