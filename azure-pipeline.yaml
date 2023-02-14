@@ -49,7 +49,7 @@ steps:
     azureSubscription: $(azureSubscription)
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
-    inlineScript: 'az acr list --output tsv | grep $resourceGroup || az acr create --resource-group $(myResourceGroup) --name (azureContainerRegistry) --sku Basic'
+    inlineScript: 'az acr list --output tsv | grep $resourceGroup || az acr create --resource-group $(myResourceGroup) --name $azureContainerRegistry --sku Basic'
 
 - task: AzureCLI@2
   displayName: Check or create appservice plan
