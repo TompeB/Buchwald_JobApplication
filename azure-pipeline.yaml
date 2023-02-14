@@ -86,5 +86,4 @@ steps:
     DockerNamespace: $(azureContainerRegistry)
     DockerRepository: $(imageName)
     DockerImageTag: '$(Build.BuildId)'
-    packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
     TakeAppOfflineFlag: true
