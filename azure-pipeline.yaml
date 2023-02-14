@@ -17,16 +17,6 @@ variables:
   region: westeurope
 
 steps:
-- task: Docker@2
-  displayName: Build and push an image to ACR
-  inputs:
-    command: buildAndPush
-    tags: |
-      $(Build.BuildId)
-    azureSubscription: $(azureSubscription)
-    azureContainerRegistry: $(azureContainerRegistry)
-    Dockerfile: '**/DockerfilePipeline'
-
 - task: AzureCLI@2
   displayName: Login
   inputs:
@@ -50,6 +40,16 @@ steps:
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
     inlineScript: 'az acr list --output tsv | grep $resourceGroup || az acr create --resource-group $(resourceGroup) --name $(azureContainerRegistry) --sku Basic'
+
+- task: Docker@2
+  displayName: Build and push an image to ACR
+  inputs:
+    command: buildAndPush
+    tags: |
+      $(Build.BuildId)
+    azureSubscription: $(azureSubscription)
+    azureContainerRegistry: $(azureContainerRegistry)
+    Dockerfile: '**/DockerfilePipeline'
 
 - task: AzureCLI@2
   displayName: Check or create appservice plan
@@ -76,7 +76,6 @@ steps:
 #    inlineScript: |
 #      az webapp config appsettings set --name $(appServicePlanName) --resource-group $(resourceGroup) --settings <environment-variable-name1>=<value1> <environment-variable-name2>=<value2>
 
-
 - task: AzureRmWebAppDeployment@4
   displayName: 'Azure App Service Deploy: $(webAppName)'
   inputs:
@@ -85,5 +84,5 @@ steps:
     DockerNamespace: $(azureContainerRegistry)
     DockerRepository: $(imageName)
     DockerImageTag: '$(Build.BuildId)'
-    packageForLinux: '$(System.DefaultWorkingDirectory)/**/drop/*.zip'
+    packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
     TakeAppOfflineFlag: true
