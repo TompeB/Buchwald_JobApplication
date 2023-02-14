@@ -37,7 +37,7 @@ using (var scope = app.Services.CreateScope())
 {
     var dataContext = scope.ServiceProvider.GetRequiredService<SalesContext>();
     //dataContext.Database.Migrate();
-    dataContext.Database.EnsureCreated();
+    //dataContext.Database.EnsureCreated();
 }
 
 //if (app.Environment.IsDevelopment())
