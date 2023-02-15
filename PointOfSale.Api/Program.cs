@@ -2,10 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using PointOfSale.Api;
 using PointOfSale.Infrastructure.Config;
 using PointOfSale.Infrastructure.Context;
-using PointOfSale.Infrastructure.Repositories;
-using PointOfSale.Shared.Interfaces.DataAccess;
 using Serilog;
-using System.Configuration;
 
 const string CorsPolicyName = "AnyOriginAnyMethodAnyHeader";
 
@@ -18,6 +15,7 @@ builder.Host.UseSerilog((ctx, lc) => lc
 //Add configuration instances with options patterm
 builder.Services.Configure<ConnectionStrings>(builder.Configuration.GetSection("ConnectionStrings"));
 builder.Services.Configure<EventHubSettings>(builder.Configuration.GetSection("EventHubSettings"));
+builder.Services.Configure<ExternalServiceSettings>(builder.Configuration.GetSection("EventHubSettings"));
 
 builder.Services.AddDependencys();
 
@@ -32,19 +30,23 @@ builder.Services.AddDbContext<SalesContext>(options =>
 
 var app = builder.Build();
 
-//Migrate database
 using (var scope = app.Services.CreateScope())
 {
-    var dataContext = scope.ServiceProvider.GetRequiredService<SalesContext>();
-    //dataContext.Database.Migrate();
-    //dataContext.Database.EnsureCreated();
+    scope
+        .ServiceProvider
+        .GetRequiredService<SalesContext>()
+        .Database
+        .EnsureCreated();
 }
 
-//if (app.Environment.IsDevelopment())
-//{
+if (!app.Environment.IsProduction())
+{
     app.UseSwagger();
     app.UseSwaggerUI();
-//}
+}
+
+//Add global exception handler
+app.UseMiddleware<GlobalExceptionHandler>();
 
 app.UseHttpsRedirection();
 
