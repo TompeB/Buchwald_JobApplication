@@ -13,6 +13,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PointOfSale.Infrastructure"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PointOfSale.Application", "PointOfSale.Application\PointOfSale.Application.csproj", "{F456B86C-3BAA-4C2D-A723-361CAB31A8E3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PointOfSale.Domain.Tests", "PointOfSale.Domain.Tests\PointOfSale.Domain.Tests.csproj", "{0FE6F714-7BD0-486A-842C-986031A5597D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PointOfSale.IntegrationTests", "PointOfSale.Api.IntegrationTests\PointOfSale.IntegrationTests.csproj", "{255BEEF9-832A-4BBC-A2BF-0886D5617DAE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +43,14 @@ Global
 		{F456B86C-3BAA-4C2D-A723-361CAB31A8E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F456B86C-3BAA-4C2D-A723-361CAB31A8E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F456B86C-3BAA-4C2D-A723-361CAB31A8E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0FE6F714-7BD0-486A-842C-986031A5597D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0FE6F714-7BD0-486A-842C-986031A5597D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0FE6F714-7BD0-486A-842C-986031A5597D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0FE6F714-7BD0-486A-842C-986031A5597D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{255BEEF9-832A-4BBC-A2BF-0886D5617DAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{255BEEF9-832A-4BBC-A2BF-0886D5617DAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{255BEEF9-832A-4BBC-A2BF-0886D5617DAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{255BEEF9-832A-4BBC-A2BF-0886D5617DAE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
