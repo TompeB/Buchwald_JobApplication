@@ -10,8 +10,6 @@ variables:
   appServicePlanName: 'PointOfSalePlan'
   resourceGroup: 'JobApplication'
   azureContainerRegistry: 'buchwaldjobapplication' 
-  servicePrincipalId: '2548af5a-810c-4ae3-bf8a-517f7d9ad407'
-  servicePrincipalKey: 'zWg8Q~EuXPYVrUzvgBN2jjdszyszBRwXqucwxcWW'
   webAppName: 'PointOfSaleApi'
   imageName: pointofsaleapi
   region: westeurope

@@ -17,23 +17,22 @@ namespace PointOfSale.Api.Controllers
             _reportingApplication = reportingApplication;
         }
 
-        [HttpGet("~/SalesByDay", Name = "SalesByDay")]
+        [HttpGet("~/Reporting/SalesByDay", Name = "SalesByDay")]
         public async Task<ActionResult<SalesByDayResponse>> GetSalesByDay()
         {
             return new SalesByDayResponse(await _reportingApplication.GetSalesByDay());
         }
 
-        [HttpGet("~/RevenueByDay", Name = "RevenueByDay")]
+        [HttpGet("~/Reporting/RevenueByDay", Name = "RevenueByDay")]
         public async Task<ActionResult<RevenueByDayResponse>> GetOverallRevenueByDay()
         {
             return new RevenueByDayResponse(await _reportingApplication.GetRevenueByDay());
         }
         
-        [HttpGet("~/RevenueByArticle", Name = "RevenueByArticle")]
+        [HttpGet("~/Statistics/RevenueByArticle", Name = "RevenueByArticle")]
         public async Task<ActionResult<RevenueByArticleResponse>> GetRevenue()
         {
             return new RevenueByArticleResponse(await _reportingApplication.GetGroupedRevenue());
         }
-
     }
 }
