@@ -51,11 +51,8 @@ using (var scope = app.Services.CreateScope())
         .EnsureCreated();
 }
 
-if (!app.Environment.IsProduction())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 //Add global exception handler
 app.UseMiddleware<GlobalExceptionHandler>();
