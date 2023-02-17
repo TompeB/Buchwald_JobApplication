@@ -7,10 +7,10 @@ pool:
 
 variables:
   azureSubscription: 'Azure Resource Group'
-  appServicePlanName: 'PointOfSalePlan'
-  resourceGroup: 'JobApplication'
-  azureContainerRegistry: 'buchwaldjobapplication' 
-  webAppName: 'PointOfSaleApi'
+  appServicePlanName: ''
+  resourceGroup: ''
+  azureContainerRegistry: '' 
+  webAppName: ''
   imageName: pointofsaleapi
   region: westeurope
   externalServiceUrl: ''
