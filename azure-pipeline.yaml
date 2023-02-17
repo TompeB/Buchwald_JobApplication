@@ -70,13 +70,13 @@ steps:
     scriptLocation: 'inlineScript'
     inlineScript: 'az appservice plan list --output tsv | grep $appServicePlanName || az appservice plan create  -g $(resourceGroup) --is-linux --name $(appServicePlanName) --sku B1'
 
-- task: AzureCLI@2
-  displayName: Check or create Azure webapp
-  inputs:
-    azureSubscription: $(azureSubscription)
-    scriptType: 'bash'
-    scriptLocation: 'inlineScript'
-    inlineScript: 'az webapp list --output tsv | grep $webAppName || az webapp create -g $(resourceGroup) -p $(appServicePlanName) -n $(webAppName) -i $(azureContainerRegistry)/$(imageName):$(Build.BuildId)'
+#- task: AzureCLI@2
+#  displayName: Check or create Azure webapp
+#  inputs:
+#    azureSubscription: $(azureSubscription)
+#    scriptType: 'bash'
+#    scriptLocation: 'inlineScript'
+#    inlineScript: 'az webapp list --output tsv | grep $webAppName || az webapp create -g $(resourceGroup) -p $(appServicePlanName) -n $(webAppName) -i $(azureContainerRegistry)/$(imageName):$(Build.BuildId)'
 
 - task: AzureCLI@2
   displayName: Set environment variables
@@ -85,4 +85,4 @@ steps:
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
     inlineScript: |
-      az webapp config appsettings set --name $(appServicePlanName) --resource-group $(resourceGroup) --settings ExternalServiceSettings__Active=$(externalServiceActive) ExternalServiceSettings__ServiceUrl=$(externalServiceUrl) EventHubSettings__Active=$(eventHubSettingsActive) EventHubSettings__Name=$(eventHubSettingsName) ConnectionStrings__AzureDb=$(connectionStringsAzureDb) ConnectionStrings__EventHub=$(connectionStringsEventHub)
+      az webapp config appsettings set --name $(webAppName) --resource-group $(resourceGroup) --settings ExternalServiceSettings__Active=$(externalServiceActive) ExternalServiceSettings__ServiceUrl=$(externalServiceUrl) EventHubSettings__Active=$(eventHubSettingsActive) EventHubSettings__Name=$(eventHubSettingsName) ConnectionStrings__AzureDb=$(connectionStringsAzureDb) ConnectionStrings__EventHub=$(connectionStringsEventHub)
