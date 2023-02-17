@@ -17,19 +17,31 @@ builder.Services.Configure<ConnectionStrings>(builder.Configuration.GetSection("
 builder.Services.Configure<EventHubSettings>(builder.Configuration.GetSection("EventHubSettings"));
 builder.Services.Configure<ExternalServiceSettings>(builder.Configuration.GetSection("EventHubSettings"));
 
-builder.Services.AddDependencys();
+//Sets all dependencys
+builder.Services.AddDependencys(builder.Configuration);
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+//Setup endpoints
 builder.Services.AddControllers();
-
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
+if(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "integrationtest") 
+{ 
+    builder.Services.AddSwaggerGen();
+}
+else
+{
+    builder.Services.AddSwaggerGen(o => o.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "PointOfSaleApi.xml")));
+}
+
+//Setup db
 builder.Services.AddDbContext<SalesContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("AzureDb")));
 
 var app = builder.Build();
 
+//Validate db
 using (var scope = app.Services.CreateScope())
 {
     scope
@@ -57,3 +69,6 @@ app.MapControllers();
 app.UseCors(CorsPolicyName);
 
 app.Run();
+
+//Visibility for Integration tests
+public partial class Program { }

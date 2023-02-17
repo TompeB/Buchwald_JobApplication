@@ -15,6 +15,10 @@ public class GlobalExceptionHandler
         _next = next;
     }
 
+    /// <summary>
+    /// Invokes all requests
+    /// </summary>
+    /// <param name="httpContext">The http context of the request</param>
     public async Task InvokeAsync(HttpContext httpContext)
     {
         try
@@ -38,19 +42,21 @@ public class GlobalExceptionHandler
         }
     }
 
+    //Prepares a bad request response when a validation error occured
     private async Task HandleValidationExceptionAsync(HttpContext context, ValidationException exception)
     {
         context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
         await HandleCustomException(context, exception);
-
     }
 
+    //Prepares a internal server error response when an error occured during tracking
     private async Task HandleTrackingExceptionAsync(HttpContext context, TrackingException exception)
     {
         context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
         await HandleCustomException(context, exception);
     }
 
+    //Sets the response
     private async Task HandleCustomException(HttpContext context, Exception exception)
     {
         context.Response.ContentType = "application/json";
@@ -64,6 +70,7 @@ public class GlobalExceptionHandler
         await context.Response.WriteAsync(JsonConvert.SerializeObject(result));
     }
 
+    //Prepares and sets the internal server error response for all other exceptions
     private async Task HandleExceptionAsync(HttpContext context, Exception exception)
     {
         context.Response.ContentType = "application/json";

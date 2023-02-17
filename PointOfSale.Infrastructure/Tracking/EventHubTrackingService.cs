@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 using PointOfSale.Infrastructure.Config;
 using PointOfSale.Shared.Dto;
 using PointOfSale.Shared.Exceptions;
-using PointOfSale.Shared.Interfaces.Services;
+using PointOfSale.Infrastructure.Interfaces;
 using System.Text;
 
 namespace PointOfSale.Application;
@@ -23,6 +23,12 @@ public class EventHubTrackingService : ITrackingService
         _logger = logger;
     }
 
+    /// <summary>
+    /// Tracks items to an EventHub consumer that than tracks the items and triggers follow up actions, etc.
+    /// We can deactivate it with the active flag in the eventhub settings
+    /// </summary>
+    /// <param name="sale">The sale event that needs to be tracked</param>
+    /// <exception cref="TrackingException">When the event couldn't be published</exception>
     public async Task TrackItems(SaleDto sale)
     {
         if (!_eventHubSettings.Active)
@@ -48,6 +54,7 @@ public class EventHubTrackingService : ITrackingService
         finally
         {
             await producerClient.DisposeAsync();
+            _logger.LogInformation($"EventHub tracking was successful.");
         }
     }
 }

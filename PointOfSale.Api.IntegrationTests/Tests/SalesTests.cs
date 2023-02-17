@@ -5,67 +5,66 @@ using System.Net.Http.Json;
 using PointOfSale.Shared.Dto;
 using System.Net;
 
-namespace PointOfSale.IntegrationTests.Tests
+namespace PointOfSale.IntegrationTests.Tests;
+
+[TestFixture()]
+public class SalesTests : TestBase
 {
-    [TestFixture()]
-    public class SalesTests : TestBase
+    private Fixture _fixture;
+
+    private const string SaleEndpoint = "Sales";
+
+    [OneTimeSetUp]
+    public void OneTimeSetUp()
     {
-        private Fixture _fixture;
+        _fixture = new Fixture();
+    }
 
-        private const string SaleEndpoint = "Sales";
+    [TearDown]
+    public void TearDown()
+    {
+        var salesContext = HostingContext.GetService<SalesContext>();
+        salesContext.Sales.RemoveRange(salesContext.Sales.ToList());
+        salesContext.SaveChanges();
+    }
 
-        [OneTimeSetUp]
-        public void OneTimeSetUp()
+    [Test()]
+    public async Task PostSale_GoodCase_RequestRespoinseAndDbAreEqual()
+    {
+        //Arrange 
+        var salesContext = HostingContext.GetService<SalesContext>();
+        var payload = _fixture.Create<SaleDto>();
+
+        // Act
+        var response = await HostingContext.Client.PostAsJsonAsync(SaleEndpoint, payload);
+
+        // Assert
+        Assert.DoesNotThrow(() => response.EnsureSuccessStatusCode());
+        var result = await response.Content.ReadFromJsonAsync<SaleDto>();
+        Assert.That(result.SalesPrice, Is.EqualTo(payload.SalesPrice));
+        Assert.That(result.ArticleNumber, Is.EqualTo(payload.ArticleNumber));
+
+        var sales = salesContext.Sales.ToList();
+        Assert.That(sales.Count(), Is.EqualTo(1));
+        Assert.That(sales.First().SalesPrice, Is.EqualTo(payload.SalesPrice));
+        Assert.That(sales.First().ArticleNumber, Is.EqualTo(payload.ArticleNumber));
+    }
+
+    [Test()]
+    [TestCase("")]
+    [TestCase("ArticleNumberThatIsWayTooLongForTheTableInTheDatabase")]
+    public async Task PostSale_BadCases_ValidationErrorIsReturned(string articleNumber)
+    {
+        //Arrange
+        var sale = new SaleDto
         {
-            _fixture = new Fixture();
-        }
+            ArticleNumber = articleNumber
+        };
 
-        [TearDown]
-        public void TearDown()
-        {
-            var salesContext = HostingContext.GetService<SalesContext>();
-            salesContext.Sales.RemoveRange(salesContext.Sales.ToList());
-            salesContext.SaveChanges();
-        }
+        //Act
+        var response = await HostingContext.Client.PostAsJsonAsync(SaleEndpoint, sale);
 
-        [Test()]
-        public async Task PostSale_GoodCase_RequestRespoinseAndDbAreEqual()
-        {
-            //Arrange 
-            var salesContext = HostingContext.GetService<SalesContext>();
-            var payload = _fixture.Create<SaleDto>();
-
-            // Act
-            var response = await HostingContext.Client.PostAsJsonAsync(SaleEndpoint, payload);
-
-            // Assert
-            Assert.DoesNotThrow(() => response.EnsureSuccessStatusCode());
-            var result = await response.Content.ReadFromJsonAsync<SaleDto>();
-            Assert.That(result.SalesPrice, Is.EqualTo(payload.SalesPrice));
-            Assert.That(result.ArticleNumber, Is.EqualTo(payload.ArticleNumber));
-
-            var sales = salesContext.Sales.ToList();
-            Assert.That(sales.Count(), Is.EqualTo(1));
-            Assert.That(sales.First().SalesPrice, Is.EqualTo(payload.SalesPrice));
-            Assert.That(sales.First().ArticleNumber, Is.EqualTo(payload.ArticleNumber));
-        }
-
-        [Test()]
-        [TestCase("")]
-        [TestCase("ArticleNumberThatIsWayTooLongForTheTableInTheDatabase")]
-        public async Task PostSale_BadCases_ValidationErrorIsReturned(string articleNumber)
-        {
-            //Arrange
-            var sale = new SaleDto
-            {
-                ArticleNumber = articleNumber
-            };
-
-            //Act
-            var response = await HostingContext.Client.PostAsJsonAsync(SaleEndpoint, sale);
-
-            //Assert
-            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
-        }
+        //Assert
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
     }
 }

@@ -1,21 +1,26 @@
 ﻿using PointOfSale.Application;
-using PointOfSale.Infrastructure;
 using PointOfSale.Infrastructure.Repositories;
-using PointOfSale.Shared.Interfaces.Application;
-using PointOfSale.Shared.Interfaces.DataAccess;
-using PointOfSale.Shared.Interfaces.Services;
+using PointOfSale.Application.Interfaces;
+using PointOfSale.Infrastructure.Interfaces;
 
-namespace PointOfSale.Api
+namespace PointOfSale.Api;
+public static class DependencyInjection
 {
-    public static class DependencyInjection
+    public static void AddDependencys(this IServiceCollection services, IConfiguration config)
     {
-        public static void AddDependencys(this IServiceCollection services)
+        services.AddScoped<IReadRepo, SqlReadRepo>();
+        services.AddScoped<IWriteRepo, SqlWriteRepo>();
+
+        if(config.GetValue<bool>("ExternalServiceSettings:Active") == true)
         {
-            services.AddScoped<IReadRepo, SqlReadRepo>();
-            services.AddScoped<IWriteRepo, SqlWriteRepo>();
-            services.AddSingleton<ITrackingService, EventHubTrackingService>();
-            services.AddScoped<ISalesApplication, SalesApplication>();
-            services.AddScoped<IReportingApplication, ReportingApplication>();
+            services.AddSingleton<ITrackingService, ExternalTrackingService>();
         }
+        else
+        {
+            services.AddSingleton<ITrackingService, EventHubTrackingService>();
+        }
+
+        services.AddScoped<ISalesApplication, SalesApplication>();
+        services.AddScoped<IReportingApplication, ReportingApplication>();
     }
 }
